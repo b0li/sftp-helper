@@ -3,7 +3,7 @@
 VS Code extension for remote file management via **SFTP and FTP**. It reads your existing `.vscode/sftp.json` config (Natizyskunk format) and adds a sidebar tree view for browsing, uploading, downloading, renaming, moving, and deleting remote files.
 
 - **Publisher:** `lake-studio`
-- **Version:** 2.5.0
+- **Version:** 2.6.0
 - **VS Code:** `^1.80.0`
 
 ## Features
@@ -16,7 +16,7 @@ VS Code extension for remote file management via **SFTP and FTP**. It reads your
 - Upload files and folders (recursive) with duplicate detection
   (Overwrite / Rename / Skip / Overwrite All / Skip All)
 - Drag & drop: internal moves inside the tree, and external upload from the OS
-- Create new folders
+- Create new files and folders
 
 ## Config
 
@@ -42,8 +42,8 @@ Array format (multi-profile) is supported; the first entry is used.
 ## Commands
 
 All commands are prefixed with `SFTP Helper:` — `Edit in Local`, `Rename`,
-`Move to...`, `Delete`, `Upload File Here`, `Upload Folder Here`,
-`New Folder`, `Refresh`.
+`Download to...`, `Move to...`, `Delete`, `Upload File Here`,
+`Upload Folder Here`, `New File`, `New Folder`, `Refresh`.
 
 ## Build
 

@@ -174,6 +174,17 @@ class SFTPConnection {
     }
   }
 
+  async createFile(remotePath) {
+    if (this.protocol === 'sftp') {
+      await this.client.put(Buffer.from(''), remotePath);
+    } else {
+      const { Readable } = require('stream');
+      const empty = new Readable();
+      empty.push(null);
+      await this.client.uploadFrom(empty, remotePath);
+    }
+  }
+
   async upload(localPath, remotePath) {
     if (this.protocol === 'sftp') {
       await this.client.put(localPath, remotePath);

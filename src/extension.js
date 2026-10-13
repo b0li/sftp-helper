@@ -436,6 +436,60 @@ function activate(context) {
     })
   );
 
+  // ── New File ─────────────────────────────────────────────
+  context.subscriptions.push(
+    vscode.commands.registerCommand('sftpHelper.newFile', async (item) => {
+      if (!item || item.type !== 'directory') {
+        vscode.window.showWarningMessage('SFTP Helper: Select a folder first.');
+        return;
+      }
+
+      const fileName = await vscode.window.showInputBox({
+        prompt: 'New file name',
+        validateInput: (v) => {
+          if (! v || v.trim().length === 0) return 'Name cannot be empty';
+          if (v.includes('/')) return 'Name cannot contain /';
+          return null;
+        },
+      });
+
+      if (! fileName) return;
+
+      const newPath = item.remotePath.endsWith('/')
+        ? item.remotePath + fileName
+        : item.remotePath + '/' + fileName;
+
+      try {
+        const conn = await createConnection();
+
+        // Abort if a file/folder with that name already exists
+        const existing = await conn.exists(newPath);
+        if (existing) {
+          await conn.disconnect();
+          vscode.window.showWarningMessage(`SFTP Helper: "${fileName}" already exists.`);
+          return;
+        }
+
+        await conn.createFile(newPath);
+        await conn.disconnect();
+
+        vscode.window.showInformationMessage(`Created file: ${fileName}`);
+        treeProvider.refresh();
+
+        // Download the empty file locally and open it for editing
+        vscode.commands.executeCommand('sftpHelper.editLocal', {
+          type: 'file',
+          name: fileName,
+          remotePath: newPath,
+        });
+      } catch (err) {
+        vscode.window.showErrorMessage(
+          `SFTP Helper: Create file failed — ${err.message}`
+        );
+      }
+    })
+  );
+
   // ── Move to... (supports multi-select) ────────────────────
   context.subscriptions.push(
     vscode.commands.registerCommand('sftpHelper.moveTo', async (item, selectedItems) => {

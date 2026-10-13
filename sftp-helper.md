@@ -66,6 +66,7 @@ sftp-helper/
   - `sftpHelper.upload` — file picker dialog, uploads to selected remote folder, duplicate check
   - `sftpHelper.uploadFolder` — folder picker, recursive upload with directory creation, duplicate check
   - `sftpHelper.newFolder` — input box, `conn.mkdir()`
+  - `sftpHelper.newFile` — input box + existence check, creates an empty file via `conn.createFile()`, then opens it via `editLocal`
   - `sftpHelper.moveTo` — multi-select aware, input box for destination path, uses `conn.rename()`
 
 ## Dependencies
@@ -123,6 +124,7 @@ The extension reads the same `.vscode/sftp.json` as the Natizyskunk SFTP extensi
 | 2.4.0 | Delete via keyboard (Delete / Cmd+Backspace / Backspace) when the tree is focused, falls back to tree selection |
 | 2.4.1 | Fixed keyboard delete on macOS: bind `delete` key on all platforms (not only cmd+backspace), broaden the when-clause to the sidebar container focus (focusedView alone did not match) |
 | 2.5.0 | Download to… — download file(s) and folders (recursive) to a chosen local folder, multi-select aware, with local overwrite check (Overwrite/Skip/All) |
+| 2.6.0 | New File — create an empty file in a remote folder (name prompt + existence check), then download & open it for editing |
 
 ## TODOs / Known Issues
 
