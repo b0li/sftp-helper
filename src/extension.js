@@ -167,8 +167,11 @@ function activate(context) {
   // ── Delete (supports multi-select) ────────────────────────
   context.subscriptions.push(
     vscode.commands.registerCommand('sftpHelper.delete', async (item, selectedItems) => {
-      // VS Code passes: (right-clicked item, all selected items)
-      const items = (selectedItems && selectedItems.length > 0) ? selectedItems : (item ? [item] : []);
+      // VS Code passes (clicked item, all selected items) from the context menu,
+      // but passes nothing when triggered via keybinding — fall back to the tree selection
+      const items = (selectedItems && selectedItems.length > 0)
+        ? selectedItems
+        : (item ? [item] : (treeView.selection || []));
       if (items.length === 0) return;
 
       const message = items.length === 1

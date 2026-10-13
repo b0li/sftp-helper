@@ -119,6 +119,7 @@ The extension reads the same `.vscode/sftp.json` as the Natizyskunk SFTP extensi
 | 2.2.0 | Multi-select, bulk delete, Move to… command, external drag & drop from OS |
 | 2.2.1 | Fixed external drag & drop (added `text/uri-list` to dropMimeTypes) |
 | 2.3.0 | Duplicate file detection on upload (Overwrite/Rename/Skip/All variants) |
+| 2.4.0 | Delete via keyboard (Delete / Cmd+Backspace / Backspace) when the tree is focused, falls back to tree selection |
 
 ## TODOs / Known Issues
 
