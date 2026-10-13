@@ -1,0 +1,15 @@
+.vscode/**
+.gitignore
+*.vsix
+sftp-helper.md
+**/.DS_Store
+**/*.log
+
+# Keep runtime deps, drop dev noise inside node_modules
+node_modules/**/test/**
+node_modules/**/tests/**
+node_modules/**/*.md
+node_modules/**/*.ts
+node_modules/**/.github/**
+node_modules/**/example/**
+node_modules/**/examples/**

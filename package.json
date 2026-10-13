@@ -1,0 +1,140 @@
+{
+	"name": "sftp-helper",
+	"displayName": "SFTP Helper - Rename & Upload",
+	"description": "Remote rename/move/delete files and folders, drag & drop upload via SFTP/FTP. Reads existing sftp.json config.",
+	"version": "2.3.0",
+	"publisher": "lake-studio",
+	"engines": {
+		"vscode": "^1.80.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"workspaceContains:.vscode/sftp.json"
+	],
+	"main": "./src/extension.js",
+	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "sftp-helper",
+					"title": "SFTP Helper",
+					"icon": "$(cloud-upload)"
+				}
+			]
+		},
+		"views": {
+			"sftp-helper": [
+				{
+					"id": "sftpHelperExplorer",
+					"name": "Remote Files",
+					"canSelectMany": true
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "sftpHelper.editLocal",
+				"title": "SFTP Helper: Edit in Local"
+			},
+			{
+				"command": "sftpHelper.rename",
+				"title": "SFTP Helper: Rename"
+			},
+			{
+				"command": "sftpHelper.delete",
+				"title": "SFTP Helper: Delete"
+			},
+			{
+				"command": "sftpHelper.moveTo",
+				"title": "SFTP Helper: Move to..."
+			},
+			{
+				"command": "sftpHelper.upload",
+				"title": "SFTP Helper: Upload File Here"
+			},
+			{
+				"command": "sftpHelper.refresh",
+				"title": "SFTP Helper: Refresh",
+				"icon": "$(refresh)"
+			},
+			{
+				"command": "sftpHelper.uploadFolder",
+				"title": "SFTP Helper: Upload Folder Here"
+			},
+			{
+				"command": "sftpHelper.newFolder",
+				"title": "SFTP Helper: New Folder"
+			}
+		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "sftpHelper.refresh",
+					"when": "view == sftpHelperExplorer",
+					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "sftpHelper.editLocal",
+					"when": "view == sftpHelperExplorer && viewItem == file",
+					"group": "1_open"
+				},
+				{
+					"command": "sftpHelper.rename",
+					"when": "view == sftpHelperExplorer",
+					"group": "2_edit@1"
+				},
+				{
+					"command": "sftpHelper.moveTo",
+					"when": "view == sftpHelperExplorer",
+					"group": "2_edit@2"
+				},
+				{
+					"command": "sftpHelper.delete",
+					"when": "view == sftpHelperExplorer",
+					"group": "2_edit@3"
+				},
+				{
+					"command": "sftpHelper.upload",
+					"when": "view == sftpHelperExplorer && viewItem == directory",
+					"group": "3_upload@1"
+				},
+				{
+					"command": "sftpHelper.uploadFolder",
+					"when": "view == sftpHelperExplorer && viewItem == directory",
+					"group": "3_upload@2"
+				},
+				{
+					"command": "sftpHelper.newFolder",
+					"when": "view == sftpHelperExplorer && viewItem == directory",
+					"group": "3_upload@3"
+				},
+				{
+					"command": "sftpHelper.refresh",
+					"when": "view == sftpHelperExplorer",
+					"group": "4_refresh"
+				}
+			]
+		}
+	},
+	"dependencies": {
+		"ssh2-sftp-client": "^11.0.0",
+		"basic-ftp": "^5.0.5"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.80.0",
+		"@vscode/vsce": "^3.2.0"
+	},
+	"scripts": {
+		"package": "vsce package --allow-missing-repository"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/b0li/sftp-helper.git"
+	},
+	"license": "GPL-2.0",
+	"author": "Markus Bäck <info@lake-studio.de> (https://www.lake-studio.de)"
+}
