@@ -60,6 +60,7 @@ sftp-helper/
   - `sftpHelper._onClick` — internal click router (not in command palette)
   - `sftpHelper.refresh` — re-reads config, refreshes tree
   - `sftpHelper.editLocal` — downloads file to local workspace (mirroring remote path structure), opens in editor
+  - `sftpHelper.downloadTo` — downloads selected file(s) and/or folders (recursive) to a user-picked local folder; multi-select aware, local overwrite check (Overwrite/Skip/All), preserves folder structure
   - `sftpHelper.rename` — input box for new name, uses `conn.rename()`
   - `sftpHelper.delete` — multi-select aware, modal confirmation, recursive for directories
   - `sftpHelper.upload` — file picker dialog, uploads to selected remote folder, duplicate check
@@ -121,6 +122,7 @@ The extension reads the same `.vscode/sftp.json` as the Natizyskunk SFTP extensi
 | 2.3.0 | Duplicate file detection on upload (Overwrite/Rename/Skip/All variants) |
 | 2.4.0 | Delete via keyboard (Delete / Cmd+Backspace / Backspace) when the tree is focused, falls back to tree selection |
 | 2.4.1 | Fixed keyboard delete on macOS: bind `delete` key on all platforms (not only cmd+backspace), broaden the when-clause to the sidebar container focus (focusedView alone did not match) |
+| 2.5.0 | Download to… — download file(s) and folders (recursive) to a chosen local folder, multi-select aware, with local overwrite check (Overwrite/Skip/All) |
 
 ## TODOs / Known Issues
 

@@ -501,6 +501,125 @@ function activate(context) {
     })
   );
 
+  // ── Download to... (files + folders, multi-select) ────────
+  context.subscriptions.push(
+    vscode.commands.registerCommand('sftpHelper.downloadTo', async (item, selectedItems) => {
+      // Context menu passes (clicked item, selection); keybinding passes nothing
+      const items = (selectedItems && selectedItems.length > 0)
+        ? selectedItems
+        : (item ? [item] : (treeView.selection || []));
+      if (items.length === 0) return;
+
+      // Ask for the local destination folder
+      const destUris = await vscode.window.showOpenDialog({
+        canSelectMany: false,
+        canSelectFolders: true,
+        canSelectFiles: false,
+        openLabel: 'Download Here',
+      });
+      if (!destUris || destUris.length === 0) return;
+
+      const destRoot = destUris[0].fsPath;
+
+      try {
+        const conn = await createConnection();
+
+        let downloaded = 0;
+        let skipped = 0;
+        const applyToAll = {}; // { overwrite: true|false }
+
+        // Resolve a local overwrite conflict; honors "apply to all"
+        const resolveConflict = async (localPath, name) => {
+          if (! fs.existsSync(localPath)) return 'write';
+          if (applyToAll.overwrite === true) return 'write';
+          if (applyToAll.overwrite === false) return 'skip';
+
+          const choice = await vscode.window.showWarningMessage(
+            `"${name}" already exists locally. Overwrite?`,
+            { modal: true },
+            'Overwrite', 'Overwrite All', 'Skip', 'Skip All'
+          );
+
+          if (choice === 'Overwrite') return 'write';
+          if (choice === 'Overwrite All') { applyToAll.overwrite = true; return 'write'; }
+          if (choice === 'Skip') return 'skip';
+          if (choice === 'Skip All') { applyToAll.overwrite = false; return 'skip'; }
+
+          return 'cancel'; // dialog dismissed
+        };
+
+        // Recursively collect all files under a remote directory
+        const collectRemote = async (remoteDir, relBase) => {
+          const out = [];
+          const entries = await conn.list(remoteDir);
+          for (const e of entries) {
+            const rPath = remoteDir.endsWith('/') ? remoteDir + e.name : remoteDir + '/' + e.name;
+            const rel = relBase ? relBase + '/' + e.name : e.name;
+            if (e.type === 'directory') {
+              out.push(...await collectRemote(rPath, rel));
+            } else {
+              out.push({ remotePath: rPath, relativePath: rel });
+            }
+          }
+          return out;
+        };
+
+        await vscode.window.withProgress(
+          {
+            location: vscode.ProgressLocation.Notification,
+            title: 'SFTP Helper: Downloading...',
+            cancellable: false,
+          },
+          async (progress) => {
+            // Build a flat job list, keeping folder structure under destRoot
+            const jobs = [];
+            for (const it of items) {
+              if (it.type === 'directory') {
+                // Preserve the folder itself (also when empty)
+                fs.mkdirSync(path.join(destRoot, it.name), { recursive: true });
+                jobs.push(...await collectRemote(it.remotePath, it.name));
+              } else {
+                jobs.push({ remotePath: it.remotePath, relativePath: it.name });
+              }
+            }
+
+            if (jobs.length === 0) return;
+
+            for (let i = 0; i < jobs.length; i++) {
+              const job = jobs[i];
+              const localPath = path.join(destRoot, ...job.relativePath.split('/'));
+
+              progress.report({
+                message: `${job.relativePath} (${i + 1}/${jobs.length})`,
+                increment: 100 / jobs.length,
+              });
+
+              const decision = await resolveConflict(localPath, job.relativePath);
+              if (decision === 'cancel') break;
+              if (decision === 'skip') { skipped++; continue; }
+
+              fs.mkdirSync(path.dirname(localPath), { recursive: true });
+              await conn.download(job.remotePath, localPath);
+              downloaded++;
+            }
+          }
+        );
+
+        await conn.disconnect();
+
+        const parts = [`${downloaded} file(s) downloaded`];
+        if (skipped > 0) parts.push(`${skipped} skipped`);
+        vscode.window.showInformationMessage(
+          `SFTP Helper: ${parts.join(', ')} → ${destRoot}`
+        );
+      } catch (err) {
+        vscode.window.showErrorMessage(
+          `SFTP Helper: Download failed — ${err.message}`
+        );
+      }
+    })
+  );
+
   vscode.window.showInformationMessage('SFTP Helper activated ✓');
 }
 
