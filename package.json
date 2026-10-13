@@ -2,7 +2,7 @@
 	"name": "sftp-helper",
 	"displayName": "SFTP Helper - Rename & Upload",
 	"description": "Remote rename/move/delete files and folders, drag & drop upload via SFTP/FTP. Reads existing sftp.json config.",
-	"version": "2.4.0",
+	"version": "2.4.1",
 	"publisher": "lake-studio",
 	"engines": {
 		"vscode": "^1.80.0"
@@ -72,13 +72,17 @@
 			{
 				"command": "sftpHelper.delete",
 				"key": "delete",
-				"mac": "cmd+backspace",
-				"when": "focusedView == sftpHelperExplorer"
+				"when": "focusedView == sftpHelperExplorer || (sideBarFocus && activeViewlet == 'workbench.view.extension.sftp-helper')"
 			},
 			{
 				"command": "sftpHelper.delete",
 				"key": "backspace",
-				"when": "focusedView == sftpHelperExplorer"
+				"when": "focusedView == sftpHelperExplorer || (sideBarFocus && activeViewlet == 'workbench.view.extension.sftp-helper')"
+			},
+			{
+				"command": "sftpHelper.delete",
+				"key": "cmd+backspace",
+				"when": "focusedView == sftpHelperExplorer || (sideBarFocus && activeViewlet == 'workbench.view.extension.sftp-helper')"
 			}
 		],
 		"menus": {

@@ -120,6 +120,7 @@ The extension reads the same `.vscode/sftp.json` as the Natizyskunk SFTP extensi
 | 2.2.1 | Fixed external drag & drop (added `text/uri-list` to dropMimeTypes) |
 | 2.3.0 | Duplicate file detection on upload (Overwrite/Rename/Skip/All variants) |
 | 2.4.0 | Delete via keyboard (Delete / Cmd+Backspace / Backspace) when the tree is focused, falls back to tree selection |
+| 2.4.1 | Fixed keyboard delete on macOS: bind `delete` key on all platforms (not only cmd+backspace), broaden the when-clause to the sidebar container focus (focusedView alone did not match) |
 
 ## TODOs / Known Issues
 
