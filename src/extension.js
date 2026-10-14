@@ -21,6 +21,15 @@ function activate(context) {
     return conn;
   };
 
+  // Resolve the target directory for create/upload actions:
+  // directory item → inside it, file item → its parent, no item (title bar) → config root
+  const resolveBaseDir = (item) => {
+    if (item && item.type === 'directory') return item.remotePath;
+    if (item && item.type === 'file') return path.posix.dirname(item.remotePath);
+    const cfg = readSftpConfig();
+    return (cfg && cfg.remotePath) ? cfg.remotePath : '/';
+  };
+
   // Tree provider for the sidebar
   treeProvider = new RemoteTreeProvider(createConnection);
 
@@ -401,10 +410,8 @@ function activate(context) {
   // ── New Folder ───────────────────────────────────────────
   context.subscriptions.push(
     vscode.commands.registerCommand('sftpHelper.newFolder', async (item) => {
-      if (!item || item.type !== 'directory') {
-        vscode.window.showWarningMessage('SFTP Helper: Select a folder first.');
-        return;
-      }
+      // Directory → inside it; file → its parent; no item (title bar) → root
+      const baseDir = resolveBaseDir(item);
 
       const folderName = await vscode.window.showInputBox({
         prompt: 'New folder name',
@@ -419,9 +426,9 @@ function activate(context) {
 
       try {
         const conn = await createConnection();
-        const newPath = item.remotePath.endsWith('/')
-          ? item.remotePath + folderName
-          : item.remotePath + '/' + folderName;
+        const newPath = baseDir.endsWith('/')
+          ? baseDir + folderName
+          : baseDir + '/' + folderName;
 
         await conn.mkdir(newPath);
         await conn.disconnect();
@@ -439,10 +446,8 @@ function activate(context) {
   // ── New File ─────────────────────────────────────────────
   context.subscriptions.push(
     vscode.commands.registerCommand('sftpHelper.newFile', async (item) => {
-      if (!item || item.type !== 'directory') {
-        vscode.window.showWarningMessage('SFTP Helper: Select a folder first.');
-        return;
-      }
+      // Directory → inside it; file → its parent; no item (title bar) → root
+      const baseDir = resolveBaseDir(item);
 
       const fileName = await vscode.window.showInputBox({
         prompt: 'New file name',
@@ -455,9 +460,9 @@ function activate(context) {
 
       if (! fileName) return;
 
-      const newPath = item.remotePath.endsWith('/')
-        ? item.remotePath + fileName
-        : item.remotePath + '/' + fileName;
+      const newPath = baseDir.endsWith('/')
+        ? baseDir + fileName
+        : baseDir + '/' + fileName;
 
       try {
         const conn = await createConnection();

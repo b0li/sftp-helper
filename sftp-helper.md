@@ -125,6 +125,7 @@ The extension reads the same `.vscode/sftp.json` as the Natizyskunk SFTP extensi
 | 2.4.1 | Fixed keyboard delete on macOS: bind `delete` key on all platforms (not only cmd+backspace), broaden the when-clause to the sidebar container focus (focusedView alone did not match) |
 | 2.5.0 | Download to… — download file(s) and folders (recursive) to a chosen local folder, multi-select aware, with local overwrite check (Overwrite/Skip/All) |
 | 2.6.0 | New File — create an empty file in a remote folder (name prompt + existence check), then download & open it for editing |
+| 2.7.0 | New File / New Folder now work at the root too (title-bar icons + "…" menu); commands resolve a base dir (directory → inside, file → parent, no item → config root) |
 
 ## TODOs / Known Issues
 

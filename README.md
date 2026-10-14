@@ -3,7 +3,7 @@
 VS Code extension for remote file management via **SFTP and FTP**. It reads your existing `.vscode/sftp.json` config (Natizyskunk format) and adds a sidebar tree view for browsing, uploading, downloading, renaming, moving, and deleting remote files.
 
 - **Publisher:** `lake-studio`
-- **Version:** 2.6.0
+- **Version:** 2.7.0
 - **VS Code:** `^1.80.0`
 
 ## Features
