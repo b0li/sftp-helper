@@ -138,7 +138,12 @@ function activate(context) {
   // ── Rename ───────────────────────────────────────────────
   context.subscriptions.push(
     vscode.commands.registerCommand('sftpHelper.rename', async (item) => {
-      if (!item) return;
+      // Keybinding passes no item — fall back to the tree selection (single item)
+      if (!item) {
+        const sel = treeView.selection || [];
+        if (sel.length === 0) return;
+        item = sel[0];
+      }
 
       const oldName = item.name;
       const newName = await vscode.window.showInputBox({

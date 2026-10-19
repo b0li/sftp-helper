@@ -126,6 +126,7 @@ The extension reads the same `.vscode/sftp.json` as the Natizyskunk SFTP extensi
 | 2.5.0 | Download to… — download file(s) and folders (recursive) to a chosen local folder, multi-select aware, with local overwrite check (Overwrite/Skip/All) |
 | 2.6.0 | New File — create an empty file in a remote folder (name prompt + existence check), then download & open it for editing |
 | 2.7.0 | New File / New Folder now work at the root too (title-bar icons + "…" menu); commands resolve a base dir (directory → inside, file → parent, no item → config root) |
+| 2.8.0 | Rename via keyboard (F2) when the tree is focused; rename falls back to the tree selection when invoked without an item |
 
 ## TODOs / Known Issues
 
