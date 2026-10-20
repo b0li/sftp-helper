@@ -10,14 +10,14 @@ It reads the **same `.vscode/sftp.json`** that the popular [Natizyskunk SFTP](ht
 
 ## Features
 
-- 🗂️ **Sidebar tree view** of the remote filesystem (SFTP or FTP/FTPS)
-- 📥 **Download** files and folders (recursive) to any local folder, with overwrite handling
-- 📤 **Upload** files and folders (recursive) with duplicate detection (Overwrite / Rename / Skip / …-All)
-- ✏️ **Rename**, **Move to…**, **Delete** — multi-select aware, recursive for folders
-- 📄 **New File** / 📁 **New Folder** — in any folder *or at the root* (toolbar icons)
-- 🖱️ **Drag & drop** — move items inside the tree, or drop files from your OS to upload
-- ⌨️ **Keyboard shortcuts** — Delete and Rename like the native Explorer
-- 🔁 Works with **SFTP** (password / private key / passphrase) and **FTP / FTPS**
+- **Sidebar tree view** of the remote filesystem (SFTP or FTP/FTPS)
+- **Download** files and folders (recursive) to any local folder, with overwrite handling
+- **Upload** files and folders (recursive) with duplicate detection (Overwrite / Rename / Skip / …-All)
+- **Rename**, **Move to…**, **Delete** — multi-select aware, recursive for folders
+- **New File** / **New Folder** — in any folder *or at the root* (toolbar buttons)
+- **Drag & drop** — move items inside the tree, or drop files from your OS to upload
+- **Keyboard shortcuts** — Delete and Rename like the native Explorer
+- Works with **SFTP** (password / private key / passphrase) and **FTP / FTPS**
 
 ### Keyboard shortcuts
 
