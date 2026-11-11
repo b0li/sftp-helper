@@ -144,6 +144,22 @@ function activate(context) {
     })
   );
 
+  // ── Open selected (Enter): file → edit, folder → toggle ───
+  context.subscriptions.push(
+    vscode.commands.registerCommand('sftpHelper.openSelected', async () => {
+      const sel = treeView.selection || [];
+      if (sel.length === 0) return;
+
+      const item = sel[0];
+      if (item.type === 'file') {
+        vscode.commands.executeCommand('sftpHelper.editLocal', item);
+      } else {
+        // Keep native folder behavior on Enter
+        vscode.commands.executeCommand('list.toggleExpand');
+      }
+    })
+  );
+
   // ── Rename ───────────────────────────────────────────────
   context.subscriptions.push(
     vscode.commands.registerCommand('sftpHelper.rename', async (item) => {

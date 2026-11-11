@@ -26,6 +26,7 @@ It reads the **same `.vscode/sftp.json`** that the popular [Natizyskunk SFTP](ht
 |---|---|---|
 | Delete | <kbd>Fn</kbd>+<kbd>Delete</kbd> / <kbd>⌘</kbd>+<kbd>⌫</kbd> / <kbd>⌫</kbd> | <kbd>Delete</kbd> / <kbd>Backspace</kbd> |
 | Rename | <kbd>Fn</kbd>+<kbd>F2</kbd> | <kbd>F2</kbd> |
+| Open file | <kbd>Enter</kbd> | <kbd>Enter</kbd> |
 
 *(active when the SFTP Helper tree has focus)*
 
