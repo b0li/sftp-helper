@@ -35,6 +35,12 @@ class RemoteTreeProvider {
     this._connectionFactory = connectionFactory;
     this._connection = null;
     this._rootPath = '/';
+    this._keepAliveTimer = null;
+    this._keepAliveBusy = false;
+
+    // Keepalive interval in seconds (0 disables); default 30s
+    const cfg = vscode.workspace.getConfiguration('sftpHelper');
+    this._keepAliveSec = cfg.get('keepAliveInterval', 30);
   }
 
   setRootPath(rootPath) {
@@ -50,14 +56,41 @@ class RemoteTreeProvider {
   async _ensureConnection() {
     if (!this._connection) {
       this._connection = await this._connectionFactory();
+      this._startKeepAlive();
     }
     return this._connection;
   }
 
   _disconnect() {
+    this._stopKeepAlive();
     if (this._connection) {
       this._connection.disconnect().catch(() => {});
       this._connection = null;
+    }
+  }
+
+  _startKeepAlive() {
+    this._stopKeepAlive();
+    if (!this._keepAliveSec || this._keepAliveSec <= 0) return;
+
+    this._keepAliveTimer = setInterval(async () => {
+      if (this._keepAliveBusy || !this._connection) return;
+      this._keepAliveBusy = true;
+      try {
+        await this._connection.keepAlive();
+      } catch {
+        // Connection is dead — drop it so the next interaction reconnects
+        this._disconnect();
+      } finally {
+        this._keepAliveBusy = false;
+      }
+    }, this._keepAliveSec * 1000);
+  }
+
+  _stopKeepAlive() {
+    if (this._keepAliveTimer) {
+      clearInterval(this._keepAliveTimer);
+      this._keepAliveTimer = null;
     }
   }
 
@@ -66,29 +99,39 @@ class RemoteTreeProvider {
   }
 
   async getChildren(element) {
-    try {
+    const remotePath = element ? element.remotePath : this._rootPath;
+
+    const listOnce = async () => {
       const conn = await this._ensureConnection();
-      const remotePath = element ? element.remotePath : this._rootPath;
+      return conn.list(remotePath);
+    };
 
-      const items = await conn.list(remotePath);
-
-      return items.map(item => {
-        const fullPath = remotePath.endsWith('/')
-          ? remotePath + item.name
-          : remotePath + '/' + item.name;
-
-        const collapsible = item.type === 'directory'
-          ? vscode.TreeItemCollapsibleState.Collapsed
-          : vscode.TreeItemCollapsibleState.None;
-
-        return new RemoteFileItem(item.name, item.type, fullPath, collapsible);
-      });
-    } catch (err) {
-      // On error, reset connection for next attempt
+    let items;
+    try {
+      items = await listOnce();
+    } catch (firstErr) {
+      // Likely a dropped/idle connection — reconnect once, silently
       this._disconnect();
-      vscode.window.showErrorMessage(`SFTP Helper: ${err.message}`);
-      return [];
+      try {
+        items = await listOnce();
+      } catch (secondErr) {
+        this._disconnect();
+        vscode.window.showErrorMessage(`SFTP Helper: ${secondErr.message}`);
+        return [];
+      }
     }
+
+    return items.map(item => {
+      const fullPath = remotePath.endsWith('/')
+        ? remotePath + item.name
+        : remotePath + '/' + item.name;
+
+      const collapsible = item.type === 'directory'
+        ? vscode.TreeItemCollapsibleState.Collapsed
+        : vscode.TreeItemCollapsibleState.None;
+
+      return new RemoteFileItem(item.name, item.type, fullPath, collapsible);
+    });
   }
 
   // ── Drag & Drop ──────────────────────────────────────────

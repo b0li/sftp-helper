@@ -46,6 +46,15 @@ function activate(context) {
 
   context.subscriptions.push(treeView);
 
+  // Optional auto-refresh (seconds; 0 = off)
+  const autoRefreshSec = vscode.workspace.getConfiguration('sftpHelper').get('autoRefreshInterval', 0);
+  if (autoRefreshSec && autoRefreshSec > 0) {
+    const autoRefreshTimer = setInterval(() => {
+      treeProvider.refresh();
+    }, autoRefreshSec * 1000);
+    context.subscriptions.push({ dispose: () => clearInterval(autoRefreshTimer) });
+  }
+
   // ── Double-click detector ─────────────────────────────────
   let lastClickPath = null;
   let lastClickTime = 0;

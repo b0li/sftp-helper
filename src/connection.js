@@ -26,6 +26,9 @@ class SFTPConnection {
       host: this.config.host,
       port: this.config.port || 22,
       username: this.config.username,
+      // Keep the SSH session alive so idle connections are not dropped
+      keepaliveInterval: 20000,
+      keepaliveCountMax: 6,
     };
 
     if (this.config.privateKeyPath) {
@@ -190,6 +193,15 @@ class SFTPConnection {
       await this.client.put(localPath, remotePath);
     } else {
       await this.client.uploadFrom(localPath, remotePath);
+    }
+  }
+
+  // Cheap round-trip to keep the connection warm (and detect a dead one)
+  async keepAlive() {
+    if (this.protocol === 'sftp') {
+      await this.client.realPath('.');
+    } else {
+      await this.client.pwd();
     }
   }
 

@@ -17,6 +17,7 @@ It reads the **same `.vscode/sftp.json`** that the popular [Natizyskunk SFTP](ht
 - **New File** / **New Folder** — in any folder *or at the root* (toolbar buttons)
 - **Drag & drop** — move items inside the tree, or drop files from your OS to upload
 - **Keyboard shortcuts** — Delete and Rename like the native Explorer
+- **Stays connected** — keepalive + silent auto-reconnect, no manual refresh after idle
 - Works with **SFTP** (password / private key / passphrase) and **FTP / FTPS**
 
 ### Keyboard shortcuts
@@ -76,6 +77,13 @@ Multi-profile (array) configs are supported — the first entry is used.
 Open the **SFTP Helper** view from the Activity Bar (cloud-upload icon) to see your remote files.
 
 ---
+
+## Settings
+
+| Setting | Default | Description |
+|---|---|---|
+| `sftpHelper.keepAliveInterval` | `30` | Seconds between keepalive pings that hold the connection open. `0` disables. |
+| `sftpHelper.autoRefreshInterval` | `0` | Auto-refresh the tree every N seconds. `0` = off (keepalive already prevents stale connections). |
 
 ## Commands
 
